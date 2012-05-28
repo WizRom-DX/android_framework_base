@@ -386,7 +386,7 @@ public class PowerManagerService extends IPowerManager.Stub
         public void release() {
             if (!mRefCounted || --mCount == 0) {
                 if (!mDeepSleepMode || !putReleasedWakeLock(mToken, 0)) {
-                    releaseWakeLockLocked(mToken, 0, false);
+                  releaseWakeLockLocked(mToken, 0, false);
                 }
                 mHeld = false;
             }
@@ -496,7 +496,7 @@ public class PowerManagerService extends IPowerManager.Stub
 
             synchronized (mLocks) {
                 // STAY_ON_WHILE_PLUGGED_IN, default to when plugged into AC
-                mStayOnConditions = getInt(STAY_ON_WHILE_PLUGGED_IN,
+                    mStayOnConditions = getInt(STAY_ON_WHILE_PLUGGED_IN,
                         BatteryManager.BATTERY_PLUGGED_AC);
                 updateWakeLockLocked();
 
@@ -742,8 +742,8 @@ public class PowerManagerService extends IPowerManager.Stub
             synchronized (mLocks) {
                 if (!mDeepSleepMode || putReleasedWakeLock(this.binder, 0) == false) {
                     releaseWakeLockLocked(this.binder, 0, true);
-                }
             }
+        }
         }
         final int flags;
         final IBinder binder;
@@ -787,20 +787,18 @@ public class PowerManagerService extends IPowerManager.Stub
     public void acquireWakeLock(int flags, IBinder lock, String tag, WorkSource ws) {
         int uid = Binder.getCallingUid();
         int pid = Binder.getCallingPid();
-
         if (uid != Process.myUid()) {
             mContext.enforceCallingOrSelfPermission(android.Manifest.permission.WAKE_LOCK, null);
         }
-
         if (ws != null) {
             enforceWakeSourcePermission(uid, pid);
         }
 
         synchronized (mLocks) {
             if (mDeepSleepMode) {
-                putAcquiredWakeLocks(flags, lock, uid, pid, tag, ws);
-                return;
-            }
+            putAcquiredWakeLocks(flags, lock, uid, pid, tag, ws);	
+            return;	
+          }	
         }
 
         long ident = Binder.clearCallingIdentity();
@@ -1007,7 +1005,7 @@ public class PowerManagerService extends IPowerManager.Stub
             mContext.enforceCallingOrSelfPermission(android.Manifest.permission.WAKE_LOCK, null);
         }
 
-        synchronized (mLocks) {
+        synchronized (mLocks) {         
             if (!mDeepSleepMode || putReleasedWakeLock(lock, flags) == false) {
                 synchronized (mLocks) {
                     releaseWakeLockLocked(lock, flags, false);
@@ -1020,35 +1018,35 @@ public class PowerManagerService extends IPowerManager.Stub
     {
       synchronized (this.mAcquiredLocks) {
           Slog.d(TAG, "putAcquiredWakeLocks flags=0x" + Integer.toHexString(paramInt1) + " tag=" + paramString);
-          this.mAcquiredLocks.dump();
+        this.mAcquiredLocks.dump();
           if (this.mAcquiredLocks.getIndex(paramIBinder) < 0) {
-              WakeLock localWakeLock = new WakeLock(paramInt1, paramIBinder, paramString, paramInt2, paramInt3);
-              localWakeLock.ws = paramWorkSource;
-              this.mAcquiredLocks.addLock(localWakeLock);
+          WakeLock localWakeLock = new WakeLock(paramInt1, paramIBinder, paramString, paramInt2, paramInt3);
+          localWakeLock.ws = paramWorkSource;
+          this.mAcquiredLocks.addLock(localWakeLock);
               Slog.d(TAG, "putAcquiredWakeLocks --> add partial wakelocks into the list, size is" + this.mAcquiredLocks.size());
-          }
-          this.mAcquiredLocks.dump();
-          return;
         }
+        this.mAcquiredLocks.dump();
+        return;
+      }
     }
 
     private boolean putReleasedWakeLock(IBinder paramIBinder, int paramInt) {
-        boolean i;
+      boolean i;
         synchronized (this.mAcquiredLocks) {
             Slog.d(TAG, "putReleasedWakeLock");
-            this.mAcquiredLocks.dump();
-            WakeLock wl = this.mAcquiredLocks.removeLock(paramIBinder);
+        this.mAcquiredLocks.dump();
+        WakeLock wl = this.mAcquiredLocks.removeLock(paramIBinder);
             Slog.d(TAG, "putReleasedWakeLock --> remove partial wakelocks into list, size is " + this.mAcquiredLocks.size());
-            this.mAcquiredLocks.dump();
+        this.mAcquiredLocks.dump();
 
             if (wl != null) {
                 Slog.d(TAG, "putReleasedWakeLock flags=0x" + Integer.toHexString(wl.flags) + " tag= " + wl.tag);
-                i = true;
+          i = true;
             } else {
-                i = false;
-            }
+          i = false;
         }
-        return i;
+      }
+      return i;
     }
 
     private void releaseWakeLockLocked(IBinder lock, int flags, boolean death) {
@@ -1857,7 +1855,7 @@ public class PowerManagerService extends IPowerManager.Stub
 
             if (mDeepSleepMode) {
                 // Deepsleep mode does not turn on screen
-                newState = (newState & ~BATTERY_LOW_BIT);
+                    newState = (newState & ~BATTERY_LOW_BIT);
             }
 
             if (batteryIsLow()) {
@@ -1990,13 +1988,13 @@ public class PowerManagerService extends IPowerManager.Stub
                 // Screen on/off didn't change, but lights may have.
                 updateLightsLocked(newState, 0);
             }
-
+            
             mPowerState = (mPowerState & ~LIGHTS_MASK) | (newState & LIGHTS_MASK);
 
             updateNativePowerStateLocked();
         }
     }
-
+    
     private void updateNativePowerStateLocked() {
         nativeSetPowerState(
                 (mPowerState & SCREEN_ON_BIT) != 0,
@@ -2166,8 +2164,8 @@ public class PowerManagerService extends IPowerManager.Stub
                 Binder.restoreCallingIdentity(identity);
             }
             if (!mSkippedScreenOn) {
-                mScreenBrightness.setTargetLocked(brightness, steps,
-                        INITIAL_SCREEN_BRIGHTNESS, nominalCurrentValue);
+            mScreenBrightness.setTargetLocked(brightness, steps,
+                    INITIAL_SCREEN_BRIGHTNESS, nominalCurrentValue);
                 if (DEBUG_SCREEN_ON) {
                     RuntimeException e = new RuntimeException("here");
                     e.fillInStackTrace();
@@ -2343,7 +2341,7 @@ public class PowerManagerService extends IPowerManager.Stub
         }
 
         public void run() {
-            synchronized (mLocks) {
+                synchronized (mLocks) {
                 // we're turning off
                 final boolean turningOff = animating && targetValue == Power.BRIGHTNESS_OFF;
                 if (mAnimateScreenLights || !turningOff) {
@@ -2352,12 +2350,12 @@ public class PowerManagerService extends IPowerManager.Stub
                     if (more) {
                         mScreenOffHandler.postAtTime(this, now+(1000/60));
                     }
-                } else {
-                    // It's pretty scary to hold mLocks for this long, and we should
-                    // redesign this, but it works for now.
-                    nativeStartSurfaceFlingerAnimation(
-                            mScreenOffReason == WindowManagerPolicy.OFF_BECAUSE_OF_PROX_SENSOR
-                            ? 0 : mAnimationSetting);
+            } else {
+                        // It's pretty scary to hold mLocks for this long, and we should
+                        // redesign this, but it works for now.
+                        nativeStartSurfaceFlingerAnimation(
+                                mScreenOffReason == WindowManagerPolicy.OFF_BECAUSE_OF_PROX_SENSOR
+                                ? 0 : mAnimationSetting);
                     mScreenBrightness.jumpToTargetLocked();
                 }
             }
@@ -2456,14 +2454,14 @@ public class PowerManagerService extends IPowerManager.Stub
 
     private void forceUserActivityLocked() {
         if (!mDeepSleepMode) {
-            if (isScreenTurningOffLocked()) {
-                // cancel animation so userActivity will succeed
-                mScreenBrightness.animating = false;
-            }
-            boolean savedActivityAllowed = mUserActivityAllowed;
-            mUserActivityAllowed = true;
-            userActivity(SystemClock.uptimeMillis(), false);
-            mUserActivityAllowed = savedActivityAllowed;
+          if (isScreenTurningOffLocked()) {	
+              // cancel animation so userActivity will succeed	
+              mScreenBrightness.animating = false;	
+          }	
+          boolean savedActivityAllowed = mUserActivityAllowed;	
+          mUserActivityAllowed = true;	
+          userActivity(SystemClock.uptimeMillis(), false);
+          mUserActivityAllowed = savedActivityAllowed;
         }
     }
 
@@ -2638,7 +2636,7 @@ public class PowerManagerService extends IPowerManager.Stub
         public void run() {
             synchronized (mLocks) {
                 if (mLightSensorPendingDecrease || mLightSensorPendingIncrease) {
-                    int value = (int)mLightSensorPendingValue;
+                int value = (int)mLightSensorPendingValue;
                     mLightSensorPendingDecrease = false;
                     mLightSensorPendingIncrease = false;
                     lightSensorChangedLocked(value);
@@ -2827,8 +2825,8 @@ public class PowerManagerService extends IPowerManager.Stub
 
                 if (mAutoBrightessEnabled && mScreenBrightnessOverride < 0) {
                     if (!mSkippedScreenOn) {
-                        mScreenBrightness.setTargetLocked(lcdValue, AUTOBRIGHTNESS_ANIM_STEPS,
-                                INITIAL_SCREEN_BRIGHTNESS, (int)mScreenBrightness.curValue);
+                    mScreenBrightness.setTargetLocked(lcdValue, AUTOBRIGHTNESS_ANIM_STEPS,
+                            INITIAL_SCREEN_BRIGHTNESS, (int)mScreenBrightness.curValue);
                     }
                     mLastLcdValue = value;
                 }
@@ -2880,7 +2878,7 @@ public class PowerManagerService extends IPowerManager.Stub
             mLocks.dump();
         }
     }
-
+    
     /**
      * The user requested that we go to deep sleep (probably with the power button).
      * This overrides all wake locks that are held.
@@ -2893,18 +2891,17 @@ public class PowerManagerService extends IPowerManager.Stub
 
         if (mode) {
             synchronized (mLocks) {
-                mDeepSleepMode = true;
+                mDeepSleepMode = mode;
                 this.releaseWakeLocksWithForce();
                 goToSleepLocked((time + 5), WindowManagerPolicy.OFF_BECAUSE_OF_USER);
-                //Power.setDeepSleepState(true);
+                Power.setDeepSleepState(true);
             }
         } else {
-            mDeepSleepMode = false;
+            mDeepSleepMode = mode;
             this.acquireWakeLocksWithForce();
             this.forceUserActivityLocked();
         }
     }
-
     /**
      * The user requested that we go to sleep (probably with the power button).
      * This overrides all wake locks that are held.
@@ -3292,17 +3289,17 @@ public class PowerManagerService extends IPowerManager.Stub
 
         void dump() {
             Slog.d(TAG, "******mAcquiredLocks contents*****");
-            Iterator Iter = iterator();
+          Iterator Iter = iterator();
             while (true) {
                 if (!Iter.hasNext()) {
-                    return;
+              return;
                 }
-                WakeLock wl = (WakeLock)Iter.next();
+            WakeLock wl = (WakeLock)Iter.next();
                 Slog.d(TAG, "LockList entry : flags=0x" + Integer.toHexString(wl.flags)
                         + " tag=" + wl.tag);
-            }
+          }
         }
-
+    
         WakeLock removeLock(IBinder binder)
         {
             int index = getIndex(binder);
@@ -3681,14 +3678,14 @@ public class PowerManagerService extends IPowerManager.Stub
                     return;
                 }
 
-                if (mLightSensorValue == -1 ||
-                        milliseconds < mLastScreenOnTime + mLightSensorWarmupTime) {
-                    // process the value immediately if screen has just turned on
+                    if (mLightSensorValue == -1 ||
+                            milliseconds < mLastScreenOnTime + mLightSensorWarmupTime) {
+                        // process the value immediately if screen has just turned on
                     mHandler.removeCallbacks(mAutoBrightnessTask);
                     mLightSensorPendingDecrease = false;
                     mLightSensorPendingIncrease = false;
-                    lightSensorChangedLocked(value);
-                } else {
+                        lightSensorChangedLocked(value);
+                    } else {
                     if ((value > mLightSensorValue && mLightSensorPendingDecrease) ||
                             (value < mLightSensorValue && mLightSensorPendingIncrease) ||
                             (value == mLightSensorValue) ||
@@ -3698,10 +3695,10 @@ public class PowerManagerService extends IPowerManager.Stub
                         mLightSensorPendingDecrease = (value < mLightSensorValue);
                         mLightSensorPendingIncrease = (value > mLightSensorValue);
                         if (mLightSensorPendingDecrease || mLightSensorPendingIncrease) {
-                            mLightSensorPendingValue = value;
-                            mHandler.postDelayed(mAutoBrightnessTask, LIGHT_SENSOR_DELAY);
-                        }
-                    } else {
+                        mLightSensorPendingValue = value;
+                        mHandler.postDelayed(mAutoBrightnessTask, LIGHT_SENSOR_DELAY);
+                    }
+                } else {
                         mLightSensorPendingValue = value;
                     }
                 }
