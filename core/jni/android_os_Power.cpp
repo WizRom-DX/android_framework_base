@@ -106,7 +106,7 @@ static JNINativeMethod method_table[] = {
     { "setScreenState", "(Z)I", (void*)setScreenState },
     { "shutdown", "()V", (void*)android_os_Power_shutdown },
     { "rebootNative", "(Ljava/lang/String;)V", (void*)android_os_Power_reboot },
-    { "setDeepSleep", "(Z)I", (void*)android_os_Power_setDeepSleepState },
+    { "setDeepSleepState", "(Z)I", (void*)android_os_Power_setDeepSleepState },
 #ifdef QCOM_HARDWARE
     { "SetUnstableMemoryState",  "(Z)I", (void*)SetUnstableMemoryState},
 #endif
